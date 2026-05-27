@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phamerator v3 — Coming Soon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-deep: #0a0d14;
+      --bg-mid: #0e1220;
+      --surface: rgba(255, 255, 255, 0.04);
+      --border: rgba(255, 255, 255, 0.08);
+      --accent-blue: #38bdf8;
+      --accent-teal: #2dd4bf;
+      --accent-purple: #818cf8;
+      --text-primary: #f0f4ff;
+      --text-muted: #7c8db5;
+
+      /* Chosen Fonts */
+      --font-primary: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: var(--font-primary);
+      overflow: hidden;
+    }
+
+    /* ── Animated mesh background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(56, 189, 248, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(45, 212, 191, 0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 55% 45%, rgba(129, 140, 248, 0.08) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+      animation: meshDrift 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshDrift {
+      0% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+
+      100% {
+        opacity: 0.85;
+        transform: scale(1.04) translateY(-18px);
+      }
+    }
+
+    /* ── Grain overlay ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 160px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* ── Layout ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+      background: rgba(10, 13, 20, 0.6);
+      flex-shrink: 0;
+    }
+
+    .topbar-brand {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: var(--text-primary);
+    }
+
+    .topbar-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: var(--accent-blue);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 24px;
+      gap: 24px;
+      min-height: 0;
+      /* allows flex item to shrink properly */
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-teal);
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.25s;
+    }
+
+    .hero-title .gradient-word {
+      background: linear-gradient(120deg, var(--accent-blue) 0%, var(--accent-teal) 60%, var(--accent-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      max-width: 560px;
+      font-size: 1.02rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.4s;
+    }
+
+    /* ── Feature pills ── */
+    .feature-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      padding: 0 24px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.65s;
+    }
+
+    .pill {
+      font-size: 0.78rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      backdrop-filter: blur(4px);
+    }
+
+    .pill.highlight {
+      border-color: rgba(56, 189, 248, 0.3);
+      color: var(--accent-blue);
+      background: rgba(56, 189, 248, 0.06);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(8px);
+      background: rgba(10, 13, 20, 0.5);
+      flex-shrink: 0;
+    }
+
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-links a {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+    }
+
+    /* ── Keyframes ── */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(22px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 12px 16px;
+      }
+
+      .hero {
+        padding: 20px 16px;
+        gap: 16px;
+      }
+
+      .hero-title {
+        font-size: clamp(1.8rem, 8vw, 2.5rem);
+        line-height: 1.15;
+      }
+
+      .hero-sub {
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .feature-pills {
+        gap: 6px;
+      }
+
+      .pill {
+        font-size: 0.72rem;
+        padding: 4px 10px;
+      }
+
+      .footer {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span class="topbar-brand">Phamerator</span>
+        <span class="topbar-badge">Version 3 COMING SOON</span>
+      </div>
+      <a href="https://phamerator.org"
+        style="font-size:0.8rem;color:var(--text-muted);text-decoration:none;font-family:var(--font-mono);font-size:0.75rem;">
+        ← Back to v2.5
+      </a>
+    </header>
+
+    <!-- Hero -->
+    <main class="hero">
+
+      <p class="hero-eyebrow">A New Era of Phage Genomics</p>
+
+      <h1 class="hero-title">
+        Find and share the story<br>
+        of your <span class="gradient-word">bacteriophage</span>
+      </h1>
+
+      <p class="hero-sub">
+        Phamerator version 3 is a complete redesign — faster exploration of phage genomes,
+        clusters, genes, and protein phamilies. See for yourself how they all fit together.
+      </p>
+
+      <!-- Feature pills -->
+      <div class="feature-pills">
+        <span class="pill highlight">✦ Redesigned UI</span>
+        <span class="pill">Faster Search</span>
+        <span class="pill">Enhanced Genome Maps</span>
+        <span class="pill">Improved Cluster Viz</span>
+        <span class="pill">Better Performance</span>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="footer-copy">
+        Phamerator.org © Steven Cresawn, Ph.D. and SEA-PHAGES 2016–2026
+      </span>
+      <div class="footer-links">
+        <a href="#">Terms & Policies</a>
+        <a href="#">SEA-PHAGES</a>
+        <a href="#">Contact</a>
+      </div>
+    </footer>
+
+  </div>
+
+</body>
+
+</html>
